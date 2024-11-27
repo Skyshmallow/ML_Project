@@ -1,0 +1,239 @@
+[
+    {
+        "label": "Flask",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "request",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "jsonify",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "send_from_directory",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "pandas",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pandas",
+        "description": "pandas",
+        "detail": "pandas",
+        "documentation": {}
+    },
+    {
+        "label": "TfidfVectorizer",
+        "importPath": "sklearn.feature_extraction.text",
+        "description": "sklearn.feature_extraction.text",
+        "isExtraImport": true,
+        "detail": "sklearn.feature_extraction.text",
+        "documentation": {}
+    },
+    {
+        "label": "cosine_similarity",
+        "importPath": "sklearn.metrics.pairwise",
+        "description": "sklearn.metrics.pairwise",
+        "isExtraImport": true,
+        "detail": "sklearn.metrics.pairwise",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "index",
+        "kind": 2,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "def index():\n    return send_from_directory(app.static_folder, \"index.html\")\n@app.route('/<path:path>')\ndef serve_static_file(path):\n    return send_from_directory(app.static_folder, path)\n# Recommendation endpoint\n@app.route('/recommend', methods=['GET'])\ndef recommend_movies():\n    title = request.args.get('title')\n    if title not in data['title'].values:",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "serve_static_file",
+        "kind": 2,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "def serve_static_file(path):\n    return send_from_directory(app.static_folder, path)\n# Recommendation endpoint\n@app.route('/recommend', methods=['GET'])\ndef recommend_movies():\n    title = request.args.get('title')\n    if title not in data['title'].values:\n        return jsonify({'error': 'Movie not found'})\n    # Find the movie index\n    idx = data[data['title'] == title].index[0]",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "recommend_movies",
+        "kind": 2,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "def recommend_movies():\n    title = request.args.get('title')\n    if title not in data['title'].values:\n        return jsonify({'error': 'Movie not found'})\n    # Find the movie index\n    idx = data[data['title'] == title].index[0]\n    sim_scores = list(enumerate(cosine_sim[idx]))\n    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)\n    # Get top 5 recommendations\n    recommendations = [data.iloc[i[0]]['title'] for i in sim_scores[1:6]]",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "movie_details",
+        "kind": 2,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "def movie_details():\n    title = request.args.get('title')\n    movie = data[data['title'] == title].iloc[0]\n    return jsonify({\n        'title': movie['title'],\n        'description': movie['description'],\n        'poster_url': movie['poster_url']\n    })\n@app.route('/suggest', methods=['GET'])\ndef suggest_movies():",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "suggest_movies",
+        "kind": 2,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "def suggest_movies():\n    query = request.args.get('query', '').lower()\n    if not query:\n        return jsonify([])\n    # Filter movies containing the query\n    suggestions = data[data['title'].str.lower().str.contains(query, na=False)]['title'].head(10).tolist()\n    return jsonify(suggestions)",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "app = Flask(__name__, static_folder=\"frontend\")\n# Load the dataset\ndata = pd.read_csv('movies_data_cleaned.csv')\n# Precompute similarity matrix\n# Combine genres into a single string for each movie if not already done\ngenre_columns = [col for col in data.columns if col not in ['title', 'release_year', 'rating', 'description', 'poster_url']]\ndata['combined_genres'] = data[genre_columns].apply(lambda row: ' '.join(row[row == 1].index), axis=1)\n# Combine genres and description into one metadata column\ndata['combined_metadata'] = data['combined_genres'] + ' ' + data['description'].fillna('')\nvectorizer = TfidfVectorizer(stop_words='english', max_features=5000)",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "data",
+        "kind": 5,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "data = pd.read_csv('movies_data_cleaned.csv')\n# Precompute similarity matrix\n# Combine genres into a single string for each movie if not already done\ngenre_columns = [col for col in data.columns if col not in ['title', 'release_year', 'rating', 'description', 'poster_url']]\ndata['combined_genres'] = data[genre_columns].apply(lambda row: ' '.join(row[row == 1].index), axis=1)\n# Combine genres and description into one metadata column\ndata['combined_metadata'] = data['combined_genres'] + ' ' + data['description'].fillna('')\nvectorizer = TfidfVectorizer(stop_words='english', max_features=5000)\ntfidf_matrix = vectorizer.fit_transform(data['combined_metadata'])\ncosine_sim = cosine_similarity(tfidf_matrix)",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "genre_columns",
+        "kind": 5,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "genre_columns = [col for col in data.columns if col not in ['title', 'release_year', 'rating', 'description', 'poster_url']]\ndata['combined_genres'] = data[genre_columns].apply(lambda row: ' '.join(row[row == 1].index), axis=1)\n# Combine genres and description into one metadata column\ndata['combined_metadata'] = data['combined_genres'] + ' ' + data['description'].fillna('')\nvectorizer = TfidfVectorizer(stop_words='english', max_features=5000)\ntfidf_matrix = vectorizer.fit_transform(data['combined_metadata'])\ncosine_sim = cosine_similarity(tfidf_matrix)\n# Serve the frontend files\n@app.route('/')\ndef index():",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "data['combined_genres']",
+        "kind": 5,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "data['combined_genres'] = data[genre_columns].apply(lambda row: ' '.join(row[row == 1].index), axis=1)\n# Combine genres and description into one metadata column\ndata['combined_metadata'] = data['combined_genres'] + ' ' + data['description'].fillna('')\nvectorizer = TfidfVectorizer(stop_words='english', max_features=5000)\ntfidf_matrix = vectorizer.fit_transform(data['combined_metadata'])\ncosine_sim = cosine_similarity(tfidf_matrix)\n# Serve the frontend files\n@app.route('/')\ndef index():\n    return send_from_directory(app.static_folder, \"index.html\")",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "data['combined_metadata']",
+        "kind": 5,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "data['combined_metadata'] = data['combined_genres'] + ' ' + data['description'].fillna('')\nvectorizer = TfidfVectorizer(stop_words='english', max_features=5000)\ntfidf_matrix = vectorizer.fit_transform(data['combined_metadata'])\ncosine_sim = cosine_similarity(tfidf_matrix)\n# Serve the frontend files\n@app.route('/')\ndef index():\n    return send_from_directory(app.static_folder, \"index.html\")\n@app.route('/<path:path>')\ndef serve_static_file(path):",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "vectorizer",
+        "kind": 5,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "vectorizer = TfidfVectorizer(stop_words='english', max_features=5000)\ntfidf_matrix = vectorizer.fit_transform(data['combined_metadata'])\ncosine_sim = cosine_similarity(tfidf_matrix)\n# Serve the frontend files\n@app.route('/')\ndef index():\n    return send_from_directory(app.static_folder, \"index.html\")\n@app.route('/<path:path>')\ndef serve_static_file(path):\n    return send_from_directory(app.static_folder, path)",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "tfidf_matrix",
+        "kind": 5,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "tfidf_matrix = vectorizer.fit_transform(data['combined_metadata'])\ncosine_sim = cosine_similarity(tfidf_matrix)\n# Serve the frontend files\n@app.route('/')\ndef index():\n    return send_from_directory(app.static_folder, \"index.html\")\n@app.route('/<path:path>')\ndef serve_static_file(path):\n    return send_from_directory(app.static_folder, path)\n# Recommendation endpoint",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "cosine_sim",
+        "kind": 5,
+        "importPath": "deploy.app",
+        "description": "deploy.app",
+        "peekOfCode": "cosine_sim = cosine_similarity(tfidf_matrix)\n# Serve the frontend files\n@app.route('/')\ndef index():\n    return send_from_directory(app.static_folder, \"index.html\")\n@app.route('/<path:path>')\ndef serve_static_file(path):\n    return send_from_directory(app.static_folder, path)\n# Recommendation endpoint\n@app.route('/recommend', methods=['GET'])",
+        "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_movies",
+        "kind": 2,
+        "importPath": "fetcher",
+        "description": "fetcher",
+        "peekOfCode": "def fetch_movies(page=1):\n    \"\"\"\n    Fetch popular movies from TMDb API.\n    :param page: Page number for pagination\n    :return: List of movie details\n    \"\"\"\n    url = f\"{BASE_URL}/movie/popular\"\n    params = {\n        'api_key': API_KEY,\n        'language': 'en-US',",
+        "detail": "fetcher",
+        "documentation": {}
+    },
+    {
+        "label": "extract_movie_data",
+        "kind": 2,
+        "importPath": "fetcher",
+        "description": "fetcher",
+        "peekOfCode": "def extract_movie_data(movie):\n    \"\"\"\n    Extract required attributes from a movie dictionary.\n    :param movie: Movie details from TMDb API\n    :return: Dictionary with required fields\n    \"\"\"\n    return {\n        'title': movie.get('title'),\n        'release_year': movie.get('release_date', '').split('-')[0],\n        'rating': movie.get('vote_average'),",
+        "detail": "fetcher",
+        "documentation": {}
+    },
+    {
+        "label": "get_genre_mapping",
+        "kind": 2,
+        "importPath": "fetcher",
+        "description": "fetcher",
+        "peekOfCode": "def get_genre_mapping():\n    \"\"\"\n    Fetch genre mapping from TMDb API.\n    :return: Dictionary mapping genre IDs to genre names\n    \"\"\"\n    url = f\"{BASE_URL}/genre/movie/list\"\n    params = {'api_key': API_KEY, 'language': 'en-US'}\n    response = requests.get(url, params=params)\n    if response.status_code == 200:\n        genres = response.json().get('genres', [])",
+        "detail": "fetcher",
+        "documentation": {}
+    },
+    {
+        "label": "API_KEY",
+        "kind": 5,
+        "importPath": "fetcher",
+        "description": "fetcher",
+        "peekOfCode": "API_KEY = '401aa692d6aa27c92e0fc0adedd58769'\nBASE_URL = 'https://api.themoviedb.org/3'\ndef fetch_movies(page=1):\n    \"\"\"\n    Fetch popular movies from TMDb API.\n    :param page: Page number for pagination\n    :return: List of movie details\n    \"\"\"\n    url = f\"{BASE_URL}/movie/popular\"\n    params = {",
+        "detail": "fetcher",
+        "documentation": {}
+    },
+    {
+        "label": "BASE_URL",
+        "kind": 5,
+        "importPath": "fetcher",
+        "description": "fetcher",
+        "peekOfCode": "BASE_URL = 'https://api.themoviedb.org/3'\ndef fetch_movies(page=1):\n    \"\"\"\n    Fetch popular movies from TMDb API.\n    :param page: Page number for pagination\n    :return: List of movie details\n    \"\"\"\n    url = f\"{BASE_URL}/movie/popular\"\n    params = {\n        'api_key': API_KEY,",
+        "detail": "fetcher",
+        "documentation": {}
+    },
+    {
+        "label": "page",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "page = requests.get(\"https://en.wikipedia.org/wiki/Main_Page\")\n# display status code\nprint(page.status_code)\n# display scraped data\nprint(page.content)",
+        "detail": "main",
+        "documentation": {}
+    }
+]
