@@ -57,12 +57,37 @@
         "documentation": {}
     },
     {
+        "label": "streamlit",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "streamlit",
+        "description": "streamlit",
+        "detail": "streamlit",
+        "documentation": {}
+    },
+    {
+        "label": "Image",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
         "label": "requests",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "requests",
         "description": "requests",
         "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
         "documentation": {}
     },
     {
@@ -180,6 +205,51 @@
         "description": "deploy.app",
         "peekOfCode": "cosine_sim = cosine_similarity(tfidf_matrix)\n# Serve the frontend files\n@app.route('/')\ndef index():\n    return send_from_directory(app.static_folder, \"index.html\")\n@app.route('/<path:path>')\ndef serve_static_file(path):\n    return send_from_directory(app.static_folder, path)\n# Recommendation endpoint\n@app.route('/recommend', methods=['GET'])",
         "detail": "deploy.app",
+        "documentation": {}
+    },
+    {
+        "label": "movies_data",
+        "kind": 5,
+        "importPath": "deploy.stream",
+        "description": "deploy.stream",
+        "peekOfCode": "movies_data = pd.read_csv(\"movies_data.csv\")\n# Set page configuration\nst.set_page_config(\n    page_title=\"Movies Explorer\",\n    page_icon=\"🎥\",\n    layout=\"wide\",\n    initial_sidebar_state=\"expanded\"\n)\n# App title\nst.title(\"🎥 Movies Explorer\")",
+        "detail": "deploy.stream",
+        "documentation": {}
+    },
+    {
+        "label": "selected_genre",
+        "kind": 5,
+        "importPath": "deploy.stream",
+        "description": "deploy.stream",
+        "peekOfCode": "selected_genre = st.sidebar.multiselect(\n    \"Genres\", options=sorted(set(\n        genre.strip() for sublist in movies_data['genres'].str.split(',') for genre in sublist\n    ))\n)\nselected_year = st.sidebar.slider(\n    \"Release Year\", min_value=int(movies_data['release_year'].min()), max_value=int(movies_data['release_year'].max()), value=(int(movies_data['release_year'].min()), int(movies_data['release_year'].max()))\n)\nselected_rating = st.sidebar.slider(\n    \"Rating\", min_value=0.0, max_value=10.0, value=(0.0, 10.0), step=0.1",
+        "detail": "deploy.stream",
+        "documentation": {}
+    },
+    {
+        "label": "selected_year",
+        "kind": 5,
+        "importPath": "deploy.stream",
+        "description": "deploy.stream",
+        "peekOfCode": "selected_year = st.sidebar.slider(\n    \"Release Year\", min_value=int(movies_data['release_year'].min()), max_value=int(movies_data['release_year'].max()), value=(int(movies_data['release_year'].min()), int(movies_data['release_year'].max()))\n)\nselected_rating = st.sidebar.slider(\n    \"Rating\", min_value=0.0, max_value=10.0, value=(0.0, 10.0), step=0.1\n)\n# Apply filters\nfiltered_movies = movies_data[\n    (movies_data['release_year'] >= selected_year[0]) &\n    (movies_data['release_year'] <= selected_year[1]) &",
+        "detail": "deploy.stream",
+        "documentation": {}
+    },
+    {
+        "label": "selected_rating",
+        "kind": 5,
+        "importPath": "deploy.stream",
+        "description": "deploy.stream",
+        "peekOfCode": "selected_rating = st.sidebar.slider(\n    \"Rating\", min_value=0.0, max_value=10.0, value=(0.0, 10.0), step=0.1\n)\n# Apply filters\nfiltered_movies = movies_data[\n    (movies_data['release_year'] >= selected_year[0]) &\n    (movies_data['release_year'] <= selected_year[1]) &\n    (movies_data['rating'] >= selected_rating[0]) &\n    (movies_data['rating'] <= selected_rating[1])\n]",
+        "detail": "deploy.stream",
+        "documentation": {}
+    },
+    {
+        "label": "filtered_movies",
+        "kind": 5,
+        "importPath": "deploy.stream",
+        "description": "deploy.stream",
+        "peekOfCode": "filtered_movies = movies_data[\n    (movies_data['release_year'] >= selected_year[0]) &\n    (movies_data['release_year'] <= selected_year[1]) &\n    (movies_data['rating'] >= selected_rating[0]) &\n    (movies_data['rating'] <= selected_rating[1])\n]\nif selected_genre:\n    filtered_movies = filtered_movies[filtered_movies['genres'].apply(lambda x: any(genre.strip() in x for genre in selected_genre))]\n# Display movies\nst.header(\"Movies\")",
+        "detail": "deploy.stream",
         "documentation": {}
     },
     {
